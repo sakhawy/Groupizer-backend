@@ -1,0 +1,45 @@
+version: "3.8"
+services: 
+    backend:
+        build: 
+            context: .
+            dockerfile: ./Dockerfile
+        container_name: groupizer_backend
+        command: >
+          sh -c "
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000"
+        ports:
+          - "8000:8000"
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB:-groupizer}
+            POSTGRES_USER: ${POSTGRES_USER:-groupizer}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-groupizer}
+            POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+            POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+        volumes:
+            - .:/groupizer_backend/
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+    postgres:
+        image: postgres
+        container_name: groupizer_postgres
+        restart: always
+        volumes: 
+            - postgres_volume:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB:-groupizer}
+            POSTGRES_USER: ${POSTGRES_USER:-groupizer}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-groupizer}
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+volumes:
+  postgres_volume: 

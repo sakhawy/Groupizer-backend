@@ -1,0 +1,9 @@
+.drafts
+.vscode
+.ipynb_checkpoints
+*.ipynb
+
+venv/
+.env
+*.sqlite3
+__pycache__/
