@@ -7,6 +7,8 @@ from accounts import views
 
 router = DefaultRouter()
 
+router.register(r'users', views.UserViewSet)
+
 urlpatterns = [
 
 ]
