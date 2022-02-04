@@ -27,4 +27,5 @@ router.registry.extend(groupizer_router.registry)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
+    path('', include('accounts.urls')),
 ]
