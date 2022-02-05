@@ -36,8 +36,8 @@ class Membership(models.Model):
 class Ad(models.Model):
 	title = models.CharField(max_length=150)
 	description = models.TextField()
-	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ads")
-	group = models.OneToOneField(Group, on_delete=models.CASCADE)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ads", blank=True, null=True)
+	group = models.OneToOneField(Group, on_delete=models.CASCADE, blank=True, null=True)
 
 	def __str__(self):
 		return self.title
