@@ -11,7 +11,7 @@ class MembershipSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.Group
-		fields = '__all__'
+		fields = ('id', 'title', 'ad', 'memberships')
 
 	memberships = MembershipSerializer(many=True, read_only=True)
 
