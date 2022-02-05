@@ -9,6 +9,8 @@ router = DefaultRouter()
 
 router.register(r'ads', views.AdViewSet)
 router.register(r'interests', views.InterestViewSet)
+router.register(r'groups', views.GroupViewSet)
+router.register(r'memberships', views.MembershipViewSet)
 
 urlpatterns = [
 

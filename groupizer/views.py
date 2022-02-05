@@ -4,6 +4,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from groupizer import models, serializers
 
+class MembershipViewSet(viewsets.ModelViewSet):
+	queryset = models.Membership.objects.all()
+	serializer_class = serializers.MembershipSerializer
+
+class GroupViewSet(viewsets.ModelViewSet):
+	queryset = models.Group.objects.all()
+	serializer_class = serializers.GroupSerializer
+
 class AdViewSet(viewsets.ModelViewSet):
 	queryset = models.Ad.objects.all()
 	serializer_class = serializers.AdSerializer
