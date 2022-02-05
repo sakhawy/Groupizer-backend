@@ -6,7 +6,7 @@ from accounts import models
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.User
-		fields = ('name', 'email', 'password', 'token')
+		fields = ('id', 'name', 'email', 'password', 'token')
 
 	token = serializers.SerializerMethodField('get_token')
 
