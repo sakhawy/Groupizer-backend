@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from groupizer import models
+from accounts.serializers import UserSerializer
 
 class MembershipSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -19,6 +20,9 @@ class AdSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.Ad
 		fields = '__all__'
+
+	user = UserSerializer(read_only=True)
+	group = GroupSerializer(read_only=True)
 
 	def create(self, validated_data):
 		# Get the authed user
