@@ -13,7 +13,7 @@ class InterestViewSet(viewsets.ModelViewSet):
 	serializer_class = serializers.InterestSerializer
 
 	@action(methods=["post"], detail=False)
-	def add(self, request):
+	def subscribe(self, request):
 		interest_ids = request.data.get('id')
 
 		if type(interest_ids) != list:
