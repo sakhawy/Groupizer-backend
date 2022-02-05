@@ -26,8 +26,8 @@ class Membership(models.Model):
 		(ADMIN, "Admin"),
 	)
 
-	role = models.CharField(max_length=30, choices=ROLES)
-	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="memberships")
+	role = models.CharField(max_length=30, choices=ROLES, blank=True, null=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="memberships", blank=True, null=True)
 	group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="memberships")
 
 	def __str__(self):
