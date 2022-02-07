@@ -43,5 +43,14 @@ services:
             timeout: 5s
             retries: 5
 
+    redis:
+      image: redis
+      container_name: groupizer_redis
+      environment:
+        REDIS_HOST: ${REDIS_HOST}
+        REDIS_PORT: ${REDIS_PORT}
+      ports:
+        - "6379:6379"
+
 volumes:
   postgres_volume: 
