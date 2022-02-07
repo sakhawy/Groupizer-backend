@@ -1,32 +1,50 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from django.db.models import Q
+
+from chat import models
+from groupizer.models import Membership
 
 class ChatConsumer(WebsocketConsumer):
 	def connect(self):
-		self.room_name = self.scope['url_route']['kwargs']['room_name']
-		self.room_group_name = 'chat_%s' % self.room_name
+
+		self.chat_id = self.scope['url_route']['kwargs']['chat']
+		self.chat_name = 'chat_%s' % self.chat_id
+		
+		self.accept()
+		
+		# Check chat existance
+		try:
+			chat = models.Chat.objects.get(id=self.chat_id)
+
+			self.user = self.scope["user"]
+
+			# Check if user is a memeber
+			role = Q(role=Membership.MEMBER) | Q(role=Membership.ADMIN) 
+			self.user = chat.group.memberships.filter(user=self.user, role=role).first()
+
+			assert self.user != None # Raise when self.user is none
+
+		except:
+			self.close() 
+			return
 
 		# Join room group
 		async_to_sync(self.channel_layer.group_add)(
-			self.room_group_name,
+			self.chat_name,
 			self.channel_name
 		)
-
-		self.accept()
-
-		self.user = self.scope["user"]
 
 		# Close anon users' connection
 		if self.user.is_anonymous:
 			self.disconnect(403)
 			self.close()
 		
-
 	def disconnect(self, close_code):
 		# Leave room group
 		async_to_sync(self.channel_layer.group_discard)(
-			self.room_group_name,
+			self.chat_name,
 			self.channel_name
 		)
 

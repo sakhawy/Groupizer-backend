@@ -3,6 +3,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from groupizer import models
 from accounts.serializers import UserSerializer
+from chat.models import Chat
 
 class MembershipSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -22,7 +23,7 @@ class MembershipSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.Group
-		fields = ('id', 'title', 'ad', 'memberships')
+		fields = ('id', 'title', 'ad', 'memberships', 'chat')
 
 	memberships = MembershipSerializer(many=True, read_only=True)
 
@@ -41,6 +42,12 @@ class AdSerializer(serializers.ModelSerializer):
 		# Create a group for the ad
 		group = models.Group.objects.create(
 			title = validated_data["title"],
+		)
+
+		# Create a chat
+		chat = Chat.objects.create(
+			group=group,
+			title=group.title 
 		)
 
 		# Create an admin membership

@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 	"channels",
 
 	"groupizer",
-	"accounts"
+	"accounts",
+	"chat",
 ]
 
 MIDDLEWARE = [
