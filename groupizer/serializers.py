@@ -10,6 +10,8 @@ class MembershipSerializer(serializers.ModelSerializer):
 		model = models.Membership
 		fields = '__all__'
 
+	user = UserSerializer(read_only=True)
+
 	def create(self, validated_data):
 		# Get the user
 		user = self.context["request"].user
