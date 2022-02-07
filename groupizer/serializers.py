@@ -9,6 +9,16 @@ class MembershipSerializer(serializers.ModelSerializer):
 		model = models.Membership
 		fields = '__all__'
 
+	def create(self, validated_data):
+		# Get the user
+		user = self.context["request"].user
+		
+		role = models.Membership.PENDING
+
+		membership = models.Membership.objects.create(user=user, role=role, **validated_data)
+		
+		return membership
+
 class GroupSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.Group
