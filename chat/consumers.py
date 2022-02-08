@@ -21,8 +21,8 @@ class ChatConsumer(WebsocketConsumer):
 			self.user = self.scope["user"]
 
 			# Check if user is a memeber
-			role = Q(role=Membership.MEMBER) | Q(role=Membership.ADMIN) 
-			self.user = chat.group.memberships.filter(user=self.user, role=role).first()
+			query = Q(Q(role=Membership.MEMBER) | Q(role=Membership.ADMIN)) & Q(user=self.user)
+			self.user = chat.group.memberships.filter(query).first()
 
 			assert self.user != None # Raise when self.user is none
 
@@ -35,11 +35,6 @@ class ChatConsumer(WebsocketConsumer):
 			self.chat_name,
 			self.channel_name
 		)
-
-		# Close anon users' connection
-		if self.user.is_anonymous:
-			self.disconnect(403)
-			self.close()
 		
 	def disconnect(self, close_code):
 		# Leave room group
@@ -55,7 +50,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Send message to room group
 		async_to_sync(self.channel_layer.group_send)(
-			self.room_group_name,
+			self.chat_name,
 			{
 				'type': 'chat_message',
 				'message': message

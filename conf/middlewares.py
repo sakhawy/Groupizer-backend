@@ -25,8 +25,9 @@ class TokenAuthMiddleware(BaseMiddleware):
 	async def __call__(self, scope, receive, send):
 		try:
 			authorization_header = dict(scope['headers']).get(b'authorization', None)
+			assert authorization_header != None
 			validated_token = self.jwt.get_validated_token(self.jwt.get_raw_token(authorization_header))
-		except KeyError:
+		except:
 			validated_token = None
 		scope['user'] = AnonymousUser() if validated_token is None else await get_user(self.user_model, validated_token)
 		return await super().__call__(scope, receive, send)
