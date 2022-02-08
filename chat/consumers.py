@@ -3,7 +3,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from django.db.models import Q
 
-from chat import models
+from chat import models, serializers
 from groupizer.models import Membership
 
 class ChatConsumer(WebsocketConsumer):
@@ -59,16 +59,15 @@ class ChatConsumer(WebsocketConsumer):
 
 	# Receive message from room group
 	def chat_message(self, event):
-		message = event['message']
+		message_text = event['message']
 
 		# Add message to chat
-		models.Message.objects.create(
+		message = models.Message.objects.create(
 			user=self.user,
-			text=message,
+			text=message_text,
 			chat=self.chat,
 		)
 
 		# Send message to WebSocket
-		self.send(text_data=json.dumps({
-			'message': message
-		}))
+		message_serializer = serializers.MessageSerializer(message)
+		self.send(text_data=json.dumps(message_serializer.data))
