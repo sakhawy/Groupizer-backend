@@ -19,10 +19,12 @@ from rest_framework import routers
 
 from accounts.urls import router as accounts_router
 from groupizer.urls import router as groupizer_router
+from chat.urls import router as chat_router
 
 router = routers.DefaultRouter()
 router.registry.extend(accounts_router.registry)
 router.registry.extend(groupizer_router.registry)
+router.registry.extend(chat_router.registry)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

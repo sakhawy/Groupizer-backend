@@ -14,6 +14,7 @@ class Message(models.Model):
 	chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name="messages")
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="messages")
 	text = models.TextField()
+	sent = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return self.text
