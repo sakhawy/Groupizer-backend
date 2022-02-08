@@ -16,15 +16,15 @@ class ChatConsumer(WebsocketConsumer):
 		
 		# Check chat existance
 		try:
-			chat = models.Chat.objects.get(id=self.chat_id)
+			self.chat = models.Chat.objects.get(id=self.chat_id)
 
 			self.user = self.scope["user"]
 
 			# Check if user is a memeber
 			query = Q(Q(role=Membership.MEMBER) | Q(role=Membership.ADMIN)) & Q(user=self.user)
-			self.user = chat.group.memberships.filter(query).first()
+			self.membership = self.chat.group.memberships.filter(query).first()
 
-			assert self.user != None # Raise when self.user is none
+			assert self.membership != None # Raise when self.membership is none
 
 		except:
 			self.close() 
@@ -60,6 +60,13 @@ class ChatConsumer(WebsocketConsumer):
 	# Receive message from room group
 	def chat_message(self, event):
 		message = event['message']
+
+		# Add message to chat
+		models.Message.objects.create(
+			user=self.user,
+			text=message,
+			chat=self.chat,
+		)
 
 		# Send message to WebSocket
 		self.send(text_data=json.dumps({
