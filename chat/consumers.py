@@ -46,20 +46,7 @@ class ChatConsumer(WebsocketConsumer):
 	# Receive message from WebSocket
 	def receive(self, text_data):
 		text_data_json = json.loads(text_data)
-		message = text_data_json['message']
-
-		# Send message to room group
-		async_to_sync(self.channel_layer.group_send)(
-			self.chat_name,
-			{
-				'type': 'chat_message',
-				'message': message
-			}
-		)
-
-	# Receive message from room group
-	def chat_message(self, event):
-		message_text = event['message']
+		message_text = text_data_json['message']
 
 		# Add message to chat
 		message = models.Message.objects.create(
@@ -67,6 +54,19 @@ class ChatConsumer(WebsocketConsumer):
 			text=message_text,
 			chat=self.chat,
 		)
+
+		# Send message to room group
+		async_to_sync(self.channel_layer.group_send)(
+			self.chat_name,
+			{
+				'type': 'chat_message',
+				'message': message.id
+			}
+		)
+
+	# Receive message from room group
+	def chat_message(self, event):
+		message = models.Message.objects.get(id=event['message'])
 
 		# Send message to WebSocket
 		message_serializer = serializers.MessageSerializer(message)
